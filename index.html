@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InspiroLink — Ansh Pahwa · Senior Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #060608;
+      --ink-2: #0c0d11;
+      --surface: #111319;
+      --surface-2: #171922;
+      --line: rgba(255,255,255,0.08);
+      --line-strong: rgba(255,255,255,0.16);
+      --text: #f4f5f7;
+      --text-dim: #a6abb8;
+      --text-faint: #6b7180;
+      --accent: #6ea8ff;
+      --accent-2: #b58bff;
+      --accent-3: #4ee0c0;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--text);
+      font-family: "Inter", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    ::selection { background: rgba(110,168,255,0.28); color: #fff; }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 999px; }
+
+    /* ── Typography ── */
+    .mono { font-family: "JetBrains Mono", monospace; }
+    .eyebrow {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .section-heading {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Layout ── */
+    .container {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
+    @media (max-width: 768px) { .container { padding: 0 1.25rem; } }
+
+    section { padding: 7rem 0; position: relative; }
+    section + section { border-top: 1px solid var(--line); }
+
+    /* ── Animations ── */
+    @keyframes gradient-pan {
+      0%,100% { background-position: 0% 50%; }
+      50%      { background-position: 100% 50%; }
+    }
+    @keyframes orb-drift {
+      0%,100% { transform: translate(0,0) scale(1); }
+      33%     { transform: translate(40px,-30px) scale(1.08); }
+      66%     { transform: translate(-30px,20px) scale(0.96); }
+    }
+    @keyframes pulse-ring {
+      0%   { transform: scale(1); opacity: 0.5; }
+      100% { transform: scale(1.9); opacity: 0; }
+    }
+    @keyframes float-dot {
+      0%,100% { transform: translateY(0); }
+      50%     { transform: translateY(-8px); }
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes draw {
+      from { stroke-dashoffset: 400; }
+      to   { stroke-dashoffset: 0; }
+    }
+    @keyframes progress-bar {
+      from { width: 0; }
+    }
+
+    .fade-up { animation: fade-up 0.7s cubic-bezier(0.16,1,0.3,1) both; }
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.45s; }
+    .delay-5 { animation-delay: 0.6s; }
+    .delay-6 { animation-delay: 0.8s; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+    .reveal-d1 { transition-delay: 0.07s; }
+    .reveal-d2 { transition-delay: 0.14s; }
+    .reveal-d3 { transition-delay: 0.21s; }
+
+    /* ── Grain overlay ── */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(6,6,8,0.72);
+      transition: border-color 0.3s;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo img {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--line-strong);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 13px;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-family: "JetBrains Mono", monospace;
+      letter-spacing: 0.06em;
+    }
+    .nav-links a:hover { color: var(--text); }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    .progress-bar {
+      position: absolute;
+      bottom: -1px; left: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      overflow: hidden;
+    }
+    .hero-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(150px);
+      pointer-events: none;
+      animation: orb-drift 18s ease-in-out infinite;
+    }
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black, transparent 85%);
+      -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 40%, black, transparent 85%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      padding: 7rem 0 5rem;
+    }
+    @media (max-width: 1024px) { .hero-content { grid-template-columns: 1fr; } }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.03);
+      border-radius: 999px;
+      padding: 6px 16px 6px 6px;
+      backdrop-filter: blur(12px);
+      margin-bottom: 2rem;
+    }
+    .hero-badge-tag {
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      padding: 4px 10px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #000;
+      font-weight: 600;
+    }
+    .hero-badge-text {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    h1.hero-title {
+      font-size: clamp(1.9rem, 4vw, 3.4rem);
+      font-weight: 600;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.75rem;
+    }
+    .gradient-text {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
+      background-size: 220% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: gradient-pan 6s ease-in-out infinite;
+    }
+    .hero-desc {
+      font-size: clamp(1rem, 1.4vw, 1.18rem);
+      color: var(--text-dim);
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-desc strong { color: var(--text); font-weight: 500; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.3s, transform 0.2s;
+      font-family: inherit;
+    }
+    .btn-primary:hover { box-shadow: 0 0 40px -6px rgba(110,168,255,0.55); transform: translateY(-1px); }
+    .btn-primary .arrow-chip {
+      width: 20px; height: 20px;
+      background: #000;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: #fff;
+    }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      padding: 14px 24px;
+      font-size: 14px;
+      color: var(--text);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+      font-family: inherit;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.05); }
+
+    /* Hero bento */
+    .hero-bento { display: flex; flex-direction: column; gap: 12px; }
+    .bento-main {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 20px;
+      background: linear-gradient(160deg, rgba(17,19,25,0.9), rgba(10,11,14,0.8));
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-main::before {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      padding: 1px;
+      background: conic-gradient(from 0deg, transparent 0deg, var(--accent) 90deg, var(--accent-2) 160deg, transparent 260deg);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0.4;
+      animation: spin-slow 8s linear infinite;
+      pointer-events: none;
+    }
+    .bento-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .inspiro-wordmark { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; color: var(--text); }
+    .inspiro-wordmark span { color: var(--accent); }
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,0.3);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent-3);
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      animation: float-dot 2s ease-in-out infinite;
+    }
+    .ecosystem-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-bottom: 8px;
+    }
+    /* SVG ecosystem */
+    .ecosystem-svg { width: 100%; height: 200px; }
+    .bento-tiles { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .bento-tile {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 16px;
+      transition: transform 0.3s;
+    }
+    .bento-tile:hover { transform: translateY(-4px); }
+    .tile-icon { font-size: 18px; margin-bottom: 10px; }
+    .tile-value { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1; }
+    .tile-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      margin-top: 5px;
+    }
+
+    /* ── Generic card grid ── */
+    .card-grid { display: grid; gap: 16px; margin-top: 3.5rem; }
+    .card-grid-2 { grid-template-columns: repeat(2,1fr); }
+    .card-grid-3 { grid-template-columns: repeat(3,1fr); }
+    @media (max-width: 1024px) { .card-grid-3 { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 640px) { .card-grid-2, .card-grid-3 { grid-template-columns: 1fr; } }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--surface);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--line-strong); }
+    .card-num {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      color: var(--text-faint);
+      margin-bottom: 12px;
+    }
+    .card-title { font-size: 15px; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+    .card-desc { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+    .card-icon { font-size: 20px; margin-bottom: 14px; }
+
+    /* ── Section header layout ── */
+    .section-intro { margin-bottom: 3.5rem; }
+    .section-intro .eyebrow { margin-bottom: 1rem; display: block; }
+
+    /* ── About ── */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+    @media (max-width: 900px) { .about-grid { grid-template-columns: 1fr; } }
+
+    .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1.5rem; }
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+      background: var(--surface);
+    }
+
+    /* ── Challenge pills ── */
+    .challenge-list { display: flex; flex-direction: column; gap: 12px; margin-top: 2rem; }
+    .challenge-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      padding: 16px 20px;
+    }
+    .challenge-index {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      color: var(--accent);
+      min-width: 24px;
+      padding-top: 2px;
+    }
+    .challenge-text { font-size: 14px; color: var(--text-dim); line-height: 1.6; }
+    .challenge-text strong { color: var(--text); font-weight: 500; }
+
+    /* ── Workflow timeline ── */
+    .timeline { display: flex; flex-direction: column; gap: 0; margin-top: 3rem; }
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 120px 1px 1fr;
+      gap: 0 24px;
+      position: relative;
+    }
+    .timeline-label {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding-top: 6px;
+      text-align: right;
+    }
+    .timeline-line {
+      width: 1px;
+      background: var(--line-strong);
+      position: relative;
+    }
+    .timeline-dot {
+      position: absolute;
+      top: 8px; left: 50%;
+      transform: translateX(-50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .timeline-body { padding: 0 0 40px 0; }
+    .timeline-body h4 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+    .timeline-body p { font-size: 13px; color: var(--text-dim); line-height: 1.65; }
+
+    /* ── Impact ── */
+    .impact-accent { color: var(--accent-3); font-size: 20px; margin-bottom: 14px; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+      padding: 7rem 0 3rem;
+    }
+    .footer-orb {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 720px; height: 420px;
+      background: radial-gradient(circle, var(--accent-2), transparent 60%);
+      border-radius: 50%;
+      opacity: 0.2;
+      filter: blur(130px);
+      pointer-events: none;
+    }
+    .footer-quote {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto 2rem;
+    }
+    .footer-sub {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 3.5rem;
+      color: var(--text-dim);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+    .footer-cta {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 5rem;
+    }
+    .footer-bar {
+      border-top: 1px solid var(--line);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: var(--text-faint); }
+    .back-top {
+      font-size: 12px;
+      color: var(--text-dim);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.2s;
+    }
+    .back-top:hover { color: var(--text); }
+
+    /* ── Deep dive accordions ── */
+    .accordion { display: flex; flex-direction: column; gap: 10px; margin-top: 2.5rem; }
+    .accordion-item { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+    .accordion-trigger {
+      width: 100%;
+      background: var(--surface);
+      border: none;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-family: inherit;
+      color: var(--text);
+      font-size: 15px;
+      text-align: left;
+      gap: 12px;
+      transition: background 0.2s;
+    }
+    .accordion-trigger:hover { background: var(--surface-2); }
+    .accordion-trigger-left { display: flex; align-items: center; gap: 12px; }
+    .accordion-cat {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(110,168,255,0.12);
+      color: var(--accent);
+    }
+    .accordion-chevron { color: var(--text-faint); transition: transform 0.3s; flex-shrink: 0; }
+    .accordion-item.open .accordion-chevron { transform: rotate(180deg); }
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .accordion-body-inner {
+      padding: 0 24px 20px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.7;
+      border-top: 1px solid var(--line);
+      padding-top: 18px;
+    }
+
+    /* ── Design system tokens display ── */
+    .token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 10px; margin-top: 2rem; }
+    .token-swatch {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .swatch-color { height: 52px; }
+    .swatch-info { background: var(--surface); padding: 8px 10px; }
+    .swatch-name { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--text-dim); }
+    .swatch-hex { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--text-faint); }
+
+    /* ── Collab map ── */
+    .collab-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 2.5rem; }
+    @media (max-width: 640px) { .collab-grid { grid-template-columns: 1fr; } }
+    .collab-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      padding: 20px;
+    }
+    .collab-role {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-2);
+      margin-bottom: 8px;
+    }
+    .collab-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
+    .collab-desc { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+
+    /* ── 508 conformance ── */
+    .conformance-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 2.5rem; }
+    @media (max-width: 640px) { .conformance-grid { grid-template-columns: 1fr; } }
+    .conformance-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      padding: 16px;
+    }
+    .conformance-status {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .status-pass { background: var(--accent-3); box-shadow: 0 0 8px var(--accent-3); }
+    .status-partial { background: #f5c542; box-shadow: 0 0 8px #f5c542; }
+    .conformance-criterion { font-family: "JetBrains Mono", monospace; font-size: 10px; color: var(--accent-3); margin-bottom: 4px; }
+    .conformance-label { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+    .conformance-note { font-size: 12px; color: var(--text-faint); line-height: 1.55; }
+
+    /* scroll reveal stagger */
+    .stagger-1 { transition-delay: 0.07s; }
+    .stagger-2 { transition-delay: 0.14s; }
+    .stagger-3 { transition-delay: 0.21s; }
+
+    /* ghost index numbers */
+    .ghost-index {
+      position: absolute;
+      right: -0.5rem;
+      top: -1rem;
+      font-size: clamp(6rem, 14vw, 11rem);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: rgba(255,255,255,0.022);
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     NAV
+══════════════════════════════════════ -->
+<nav id="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <img src="logo.png" alt="Ansh Pahwa" onerror="this.style.display='none'" />
+        Ansh Pahwa
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#challenge">Challenge</a></li>
+        <li><a href="#solutions">Deep Dives</a></li>
+        <li><a href="#impact">Impact</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="progress-bar" id="progressBar"></div>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HERO
+══════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-orb" style="right:-6%;top:-14%;width:620px;height:620px;background:radial-gradient(circle,var(--accent),transparent 62%);opacity:0.28;animation-delay:0s;"></div>
+  <div class="hero-orb" style="bottom:-22%;left:-8%;width:540px;height:540px;background:radial-gradient(circle,var(--accent-2),transparent 62%);opacity:0.22;animation-delay:-6s;"></div>
+  <div class="hero-orb" style="left:40%;top:30%;width:380px;height:380px;background:radial-gradient(circle,var(--accent-3),transparent 62%);opacity:0.16;animation-delay:-11s;"></div>
+  <div class="hero-grid"></div>
+
+  <div class="container">
+    <div class="hero-content">
+      <!-- Left: Copy -->
+      <div>
+        <div class="hero-badge fade-up delay-1">
+          <span class="hero-badge-tag">Case Study</span>
+          <span class="hero-badge-text">Enterprise Healthcare · Product Design</span>
+        </div>
+        <h1 class="hero-title fade-up delay-2">
+          Designing Enterprise Healthcare Workflows at <span class="gradient-text">Scale</span>
+        </h1>
+        <p class="hero-desc fade-up delay-3">
+          How I simplified high-value Cell &amp; Gene Therapy ordering on
+          <strong>InspiroLink</strong> — balancing compliance, flexibility, and usability.
+        </p>
+        <div class="btn-row fade-up delay-4">
+          <a href="#about" class="btn-primary">
+            Read the story
+            <span class="arrow-chip">&#8594;</span>
+          </a>
+          <a href="#solutions" class="btn-ghost">Jump to deep dives</a>
+        </div>
+      </div>
+
+      <!-- Right: Bento -->
+      <div class="hero-bento fade-up delay-3">
+        <div class="bento-main">
+          <div class="bento-header">
+            <span class="inspiro-wordmark">Inspiro<span>Link</span></span>
+            <span class="live-badge"><span class="live-dot"></span>live sync</span>
+          </div>
+          <div class="ecosystem-label">Ordering ecosystem</div>
+
+          <!-- SVG ecosystem flow -->
+          <svg class="ecosystem-svg" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
+            <defs>
+              <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#6ea8ff"/>
+                <stop offset="1" stop-color="#b58bff"/>
+              </linearGradient>
+              <marker id="arrow" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="url(#lg1)" opacity="0.6"/>
+              </marker>
+            </defs>
+            <!-- Connector lines -->
+            <path d="M 90 50 C 180 50, 180 100, 200 100" stroke="url(#lg1)" stroke-width="1.2" fill="none" stroke-opacity="0.5" stroke-dasharray="400" style="animation:draw 1.2s 0.6s ease-in-out both;"/>
+            <path d="M 90 100 C 150 100, 170 100, 200 100" stroke="url(#lg1)" stroke-width="1.2" fill="none" stroke-opacity="0.5" stroke-dasharray="400" style="animation:draw 1.2s 0.75s ease-in-out both;"/>
+            <path d="M 90 155 C 180 155, 180 100, 200 100" stroke="url(#lg1)" stroke-width="1.2" fill="none" stroke-opacity="0.5" stroke-dasharray="400" style="animation:draw 1.2s 0.9s ease-in-out both;"/>
+            <path d="M 200 100 C 230 100, 250 60, 310 60" stroke="url(#lg1)" stroke-width="1.2" fill="none" stroke-opacity="0.5" stroke-dasharray="400" style="animation:draw 1.2s 1.05s ease-in-out both;"/>
+            <path d="M 200 100 C 230 100, 250 145, 310 145" stroke="url(#lg1)" stroke-width="1.2" fill="none" stroke-opacity="0.5" stroke-dasharray="400" style="animation:draw 1.2s 1.2s ease-in-out both;"/>
+
+            <!-- Central hub -->
+            <circle cx="200" cy="100" r="30" fill="rgba(110,168,255,0.1)" stroke="#6ea8ff" stroke-width="1.2"/>
+            <circle cx="200" cy="100" r="30" fill="none" stroke="#6ea8ff" stroke-width="1" opacity="0.4" style="animation:pulse-ring 2.8s ease-out infinite;transform-origin:200px 100px;"/>
+            <text x="200" y="95" text-anchor="middle" fill="#6ea8ff" font-size="11" font-family="JetBrains Mono">IL</text>
+            <text x="200" y="113" text-anchor="middle" fill="#a6abb8" font-size="8" font-family="JetBrains Mono">InspiroLink</text>
+
+            <!-- Left nodes -->
+            <rect x="10" y="36" width="80" height="28" rx="14" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1"/>
+            <text x="50" y="54" text-anchor="middle" fill="var(--text-dim)" font-size="10" font-family="Inter">🏥 Hospitals</text>
+
+            <rect x="10" y="86" width="80" height="28" rx="14" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1"/>
+            <text x="50" y="104" text-anchor="middle" fill="var(--text-dim)" font-size="10" font-family="Inter">🩺 Clinics</text>
+
+            <rect x="10" y="141" width="80" height="28" rx="14" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1"/>
+            <text x="50" y="159" text-anchor="middle" fill="var(--text-dim)" font-size="10" font-family="Inter">🏭 Manufacturers</text>
+
+            <!-- Right nodes -->
+            <rect x="310" y="46" width="80" height="28" rx="14" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1"/>
+            <text x="350" y="64" text-anchor="middle" fill="var(--text-dim)" font-size="10" font-family="Inter">💻 SAP</text>
+
+            <rect x="310" y="131" width="80" height="28" rx="14" fill="var(--surface)" stroke="var(--line-strong)" stroke-width="1"/>
+            <text x="350" y="149" text-anchor="middle" fill="var(--text-dim)" font-size="10" font-family="Inter">💊 Patients</text>
+          </svg>
+        </div>
+
+        <div class="bento-tiles">
+          <div class="bento-tile">
+            <div class="tile-icon">📦</div>
+            <div class="tile-value">$4M+</div>
+            <div class="tile-label">Min. order value</div>
+          </div>
+          <div class="bento-tile">
+            <div class="tile-icon">📊</div>
+            <div class="tile-value">Multi-org</div>
+            <div class="tile-label">Approval hierarchies</div>
+          </div>
+          <div class="bento-tile">
+            <div class="tile-icon">🔒</div>
+            <div class="tile-value">PHI</div>
+            <div class="tile-label">Sensitive by default</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ABOUT THE PRODUCT
+══════════════════════════════════════ -->
+<section id="about">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">01</div>
+    <div class="about-grid">
+      <div class="section-intro reveal">
+        <span class="eyebrow">About the product</span>
+        <h2 class="section-heading" style="margin-top:1rem;">McKesson's Cell &amp; Gene Therapy platform.</h2>
+        <p style="margin-top:1.5rem;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+          InspiroLink is McKesson's enterprise ordering platform for Cell &amp; Gene Therapies — a class of treatments where a single order can exceed <strong style="color:var(--text);">$4M</strong> and mistakes have life-critical consequences. The system connects hospitals, clinics, manufacturers, and patients through a configurable approval and ordering workflow.
+        </p>
+        <div class="tag-row">
+          <span class="tag">Enterprise SaaS</span>
+          <span class="tag">Healthcare</span>
+          <span class="tag">B2B2C</span>
+          <span class="tag">McKesson</span>
+          <span class="tag">Cell &amp; Gene Therapy</span>
+        </div>
+      </div>
+      <div class="reveal reveal-d1">
+        <div class="card" style="height:100%;">
+          <div class="eyebrow" style="margin-bottom:1.25rem;">My role</div>
+          <p style="font-size:14px;color:var(--text-dim);line-height:1.75;">
+            I was the <strong style="color:var(--text);">sole Product Designer</strong> — responsible for end-to-end UX across all modules: approval group configuration, order creation, regex-based validation, workflow orchestration, and the design system that underpinned all of it.
+          </p>
+          <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);">
+              <span style="color:var(--accent);">◆</span> UX Research &amp; Synthesis
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);">
+              <span style="color:var(--accent-2);">◆</span> Interaction &amp; Visual Design
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);">
+              <span style="color:var(--accent-3);">◆</span> Design System Architecture
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);">
+              <span style="color:var(--accent);">◆</span> Section 508 Compliance
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text-dim);">
+              <span style="color:var(--accent-2);">◆</span> Engineering Collaboration
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     THE CHALLENGE
+══════════════════════════════════════ -->
+<section id="challenge">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">02</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">The challenge</span>
+      <h2 class="section-heading" style="margin-top:1rem;">Five problems no one had solved yet.</h2>
+      <p style="margin-top:1.5rem;max-width:680px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        Cell &amp; Gene Therapy ordering sits at the intersection of high-stakes compliance, complex organizational hierarchies, and real-time supply chain pressure. Here's what made this genuinely hard.
+      </p>
+    </div>
+    <div class="challenge-list">
+      <div class="challenge-item reveal">
+        <span class="challenge-index">01</span>
+        <p class="challenge-text"><strong>No standardized ordering model</strong> — every organization had a different understanding of what an "order" even meant.</p>
+      </div>
+      <div class="challenge-item reveal reveal-d1">
+        <span class="challenge-index">02</span>
+        <p class="challenge-text"><strong>Multi-level approval chains</strong> varied per org, per therapy type, and per order value — and all of it had to be configurable without engineering involvement.</p>
+      </div>
+      <div class="challenge-item reveal reveal-d2">
+        <span class="challenge-index">03</span>
+        <p class="challenge-text"><strong>PHI &amp; compliance requirements</strong> meant every data field needed sensitivity classification, audit trails, and role-based visibility.</p>
+      </div>
+      <div class="challenge-item reveal reveal-d1">
+        <span class="challenge-index">04</span>
+        <p class="challenge-text"><strong>Validation logic</strong> was expressed as raw regex in a database — admins needed to write and test these rules without knowing regex.</p>
+      </div>
+      <div class="challenge-item reveal reveal-d2">
+        <span class="challenge-index">05</span>
+        <p class="challenge-text"><strong>Section 508 compliance</strong> was required from day one for government-adjacent hospital systems — not a retrofit.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     WORKFLOW JOURNEY
+══════════════════════════════════════ -->
+<section id="workflow">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">03</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Workflow journey</span>
+      <h2 class="section-heading" style="margin-top:1rem;">From discovery to a system that holds.</h2>
+    </div>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-label">Discovery</div>
+        <div class="timeline-line"><div class="timeline-dot"></div></div>
+        <div class="timeline-body">
+          <h4>Stakeholder interviews &amp; process mapping</h4>
+          <p>Mapped existing ordering flows across 3 hospital systems to identify where manual steps created bottlenecks and compliance gaps.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-d1">
+        <div class="timeline-label">Definition</div>
+        <div class="timeline-line"><div class="timeline-dot"></div></div>
+        <div class="timeline-body">
+          <h4>Mental model synthesis</h4>
+          <p>Synthesized 40+ hours of research into a configurable data model — separating what needed to be enforced by the system vs. what needed to be delegated to admins.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-d2">
+        <div class="timeline-label">Design</div>
+        <div class="timeline-line"><div class="timeline-dot"></div></div>
+        <div class="timeline-body">
+          <h4>Approval group architecture &amp; regex builder</h4>
+          <p>Designed the two highest-complexity modules: a visual approval group builder and a no-code regex rule editor — both had to serve non-technical admins.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-d1">
+        <div class="timeline-label">Validation</div>
+        <div class="timeline-line"><div class="timeline-dot"></div></div>
+        <div class="timeline-body">
+          <h4>Usability testing with admins</h4>
+          <p>5 rounds of moderated testing with real clinical operations staff. Key finding: admins trusted the system more when they could see the effect of a rule before saving it.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal reveal-d2">
+        <div class="timeline-label">Delivery</div>
+        <div class="timeline-line"><div class="timeline-dot" style="background:var(--accent-3);box-shadow:0 0 12px var(--accent-3);"></div></div>
+        <div class="timeline-body">
+          <h4>Design system &amp; handoff</h4>
+          <p>Built a component library covering 60+ patterns across 4 domains. Spec'd accessibility at the component level — not as a final audit.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     DEEP DIVES
+══════════════════════════════════════ -->
+<section id="solutions">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">04</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Deep dives</span>
+      <h2 class="section-heading" style="margin-top:1rem;">The two hardest problems.</h2>
+      <p style="margin-top:1.5rem;max-width:640px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        Of the 15+ features I designed, two required the most design invention. Here's the thinking behind each.
+      </p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:3rem;">
+      <!-- Approval Groups -->
+      <div class="card reveal" style="border-left:3px solid var(--accent);">
+        <div class="eyebrow" style="margin-bottom:1rem;color:var(--accent);">Deep dive 01</div>
+        <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:1rem;letter-spacing:-0.015em;">Approval Group Builder</h3>
+        <p class="card-desc" style="margin-bottom:1.5rem;">Clinical operations teams needed to define multi-tiered approval chains — but the underlying data model was complex enough that it would take a developer weeks to configure in the database. I needed to make that configurable in a UI.</p>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Model</span>
+                The mental model problem
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Approvers and approval groups aren't the same thing. Most admins conflated them. I separated the concepts visually — groups as containers, approvers as members — and used progressive disclosure to introduce complexity only when needed.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Decision</span>
+                Flat list vs. hierarchy UI
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Tested both a nested tree UI and a flat sequential list. The flat list consistently tested better — admins understood "step 1 approves before step 2" more intuitively than parent-child nodes. Chose the flat list with explicit ordering controls.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Outcome</span>
+                What shipped
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                A drag-and-drop approval step builder with inline member assignment, condition preview, and a simulation mode where admins could test a chain against a hypothetical order before activating it.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Regex Builder -->
+      <div class="card reveal reveal-d1" style="border-left:3px solid var(--accent-2);">
+        <div class="eyebrow" style="margin-bottom:1rem;color:var(--accent-2);">Deep dive 02</div>
+        <h3 style="font-size:1.25rem;font-weight:600;margin-bottom:1rem;letter-spacing:-0.015em;">No-Code Regex Builder</h3>
+        <p class="card-desc" style="margin-bottom:1.5rem;">The platform stored field-level validation rules as raw regex in the database. Admins needed to edit these — but regex is a programmer's tool. I had to make it usable by clinical operations staff who had never written a line of code.</p>
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Insight</span>
+                What admins actually meant
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Admins didn't think in patterns — they thought in examples. "It should look like this: NDC-12345-678-90." I used this insight to design an example-first interface where admins describe valid values, and the system infers the pattern.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Pattern</span>
+                Building blocks approach
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Rather than expose regex syntax, I gave admins composable blocks: "must start with", "followed by N digits", "optional suffix", etc. Each block mapped to a regex fragment. The final pattern was always visible — but hidden behind a toggle for those who didn't need it.
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+              <span class="accordion-trigger-left">
+                <span class="accordion-cat">Validation</span>
+                Live test harness
+              </span>
+              <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="accordion-body">
+              <div class="accordion-body-inner">
+                Inline test input — type a sample value, see pass/fail immediately. This removed the anxiety of "did I configure it right?" and gave admins confidence to save rules without needing an engineer to verify.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    @media (max-width: 768px) { #solutions .card-grid { grid-template-columns: 1fr; } }
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     COLLABORATION
+══════════════════════════════════════ -->
+<section id="collaboration">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">05</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Collaboration</span>
+      <h2 class="section-heading" style="margin-top:1rem;">Designing with — not for.</h2>
+      <p style="margin-top:1.5rem;max-width:640px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        As the only designer on a cross-functional team, I embedded myself in every discipline.
+      </p>
+    </div>
+    <div class="collab-grid">
+      <div class="collab-card reveal">
+        <div class="collab-role">Engineering</div>
+        <div class="collab-title">Paired on edge cases</div>
+        <p class="collab-desc">Weekly syncs to walk through specs and catch implementation gaps before they became bugs. I wrote interaction notes directly in Jira tickets, not just Figma comments.</p>
+      </div>
+      <div class="collab-card reveal reveal-d1">
+        <div class="collab-role">Product Management</div>
+        <div class="collab-title">Shaped the roadmap</div>
+        <p class="collab-desc">Brought user research into sprint planning. Translated clinical ops feedback into prioritized design debt — not just feature requests.</p>
+      </div>
+      <div class="collab-card reveal reveal-d2">
+        <div class="collab-role">Clinical Operations</div>
+        <div class="collab-title">Continuous co-design</div>
+        <p class="collab-desc">5 rounds of usability testing with actual admins. Recruited participants, moderated sessions, and synthesized findings within the same sprint.</p>
+      </div>
+      <div class="collab-card reveal reveal-d1">
+        <div class="collab-role">Compliance &amp; Legal</div>
+        <div class="collab-title">508 from day one</div>
+        <p class="collab-desc">Embedded Section 508 requirements into component specs early — not as a post-launch audit. Saved an estimated 3 months of remediation work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     ACCESSIBILITY
+══════════════════════════════════════ -->
+<section id="accessibility">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">06</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Accessibility</span>
+      <h2 class="section-heading" style="margin-top:1rem;">Built in, not bolted on.</h2>
+      <p style="margin-top:1.5rem;max-width:640px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        Healthcare systems serving government-adjacent clients require Section 508 conformance by law. I treated accessibility as an architectural concern from the first component.
+      </p>
+    </div>
+    <div class="conformance-grid">
+      <div class="conformance-item reveal">
+        <div class="conformance-status status-pass"></div>
+        <div>
+          <div class="conformance-criterion">1.4.3 / AA</div>
+          <div class="conformance-label">Contrast Ratio</div>
+          <p class="conformance-note">All text meets 4.5:1 minimum. Interactive surfaces meet 3:1.</p>
+        </div>
+      </div>
+      <div class="conformance-item reveal reveal-d1">
+        <div class="conformance-status status-pass"></div>
+        <div>
+          <div class="conformance-criterion">2.4.7 / AA</div>
+          <div class="conformance-label">Focus Visible</div>
+          <p class="conformance-note">Custom focus ring system with 2px offset on all interactive elements.</p>
+        </div>
+      </div>
+      <div class="conformance-item reveal reveal-d2">
+        <div class="conformance-status status-pass"></div>
+        <div>
+          <div class="conformance-criterion">1.3.1 / A</div>
+          <div class="conformance-label">Info &amp; Relationships</div>
+          <p class="conformance-note">Semantic HTML enforced in the design system. No div-soup components.</p>
+        </div>
+      </div>
+      <div class="conformance-item reveal reveal-d1">
+        <div class="conformance-status status-pass"></div>
+        <div>
+          <div class="conformance-criterion">2.1.1 / A</div>
+          <div class="conformance-label">Keyboard Accessible</div>
+          <p class="conformance-note">Full keyboard navigation including drag-and-drop fallbacks.</p>
+        </div>
+      </div>
+      <div class="conformance-item reveal">
+        <div class="conformance-status status-pass"></div>
+        <div>
+          <div class="conformance-criterion">4.1.2 / A</div>
+          <div class="conformance-label">Name, Role, Value</div>
+          <p class="conformance-note">ARIA annotations on every custom component, reviewed with NVDA.</p>
+        </div>
+      </div>
+      <div class="conformance-item reveal reveal-d1">
+        <div class="conformance-status status-partial"></div>
+        <div>
+          <div class="conformance-criterion" style="color:#f5c542;">1.4.4 / AA</div>
+          <div class="conformance-label">Resize Text</div>
+          <p class="conformance-note">Meets 200% zoom. 400% reflow in scope for phase 2.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     DESIGN SYSTEM
+══════════════════════════════════════ -->
+<section id="design-system">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">07</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Design system</span>
+      <h2 class="section-heading" style="margin-top:1rem;">One source of truth across 60+ patterns.</h2>
+      <p style="margin-top:1.5rem;max-width:640px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        I built InspiroLink's component library from zero — token-first, accessibility-annotated, and documented for engineers who had never worked from a design system before.
+      </p>
+    </div>
+
+    <div class="token-grid reveal">
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#060608;"></div>
+        <div class="swatch-info"><div class="swatch-name">Ink</div><div class="swatch-hex">#060608</div></div>
+      </div>
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#111319;"></div>
+        <div class="swatch-info"><div class="swatch-name">Surface</div><div class="swatch-hex">#111319</div></div>
+      </div>
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#6ea8ff;"></div>
+        <div class="swatch-info"><div class="swatch-name">Accent Blue</div><div class="swatch-hex">#6EA8FF</div></div>
+      </div>
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#b58bff;"></div>
+        <div class="swatch-info"><div class="swatch-name">Accent Purple</div><div class="swatch-hex">#B58BFF</div></div>
+      </div>
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#4ee0c0;"></div>
+        <div class="swatch-info"><div class="swatch-name">Accent Teal</div><div class="swatch-hex">#4EE0C0</div></div>
+      </div>
+      <div class="token-swatch">
+        <div class="swatch-color" style="background:#f4f5f7;"></div>
+        <div class="swatch-info"><div class="swatch-name">Text</div><div class="swatch-hex">#F4F5F7</div></div>
+      </div>
+    </div>
+
+    <div class="card-grid card-grid-3 reveal" style="margin-top:2rem;">
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.75rem;">Components</div>
+        <div style="font-size:2rem;font-weight:700;letter-spacing:-0.03em;">60+</div>
+        <p class="card-desc" style="margin-top:0.5rem;">Patterns covering forms, tables, modals, status indicators, and complex builders.</p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.75rem;">Token layers</div>
+        <div style="font-size:2rem;font-weight:700;letter-spacing:-0.03em;">3</div>
+        <p class="card-desc" style="margin-top:0.5rem;">Primitive → semantic → component. Changes propagate without touching individual components.</p>
+      </div>
+      <div class="card">
+        <div class="eyebrow" style="margin-bottom:0.75rem;">Adoption</div>
+        <div style="font-size:2rem;font-weight:700;letter-spacing:-0.03em;">100%</div>
+        <p class="card-desc" style="margin-top:0.5rem;">Every screen uses system components. No one-off designs shipped without a system rationale.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     IMPACT
+══════════════════════════════════════ -->
+<section id="impact">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">08</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Impact</span>
+      <h2 class="section-heading" style="margin-top:1rem;">Meaningful outcomes — not invented metrics.</h2>
+      <p style="margin-top:1.5rem;max-width:640px;color:var(--text-dim);font-size:1.05rem;line-height:1.75;">
+        I'd rather be honest about impact than fabricate numbers. Here's what the work genuinely enabled.
+      </p>
+    </div>
+    <div class="card-grid card-grid-3">
+      <div class="card reveal">
+        <div class="card-icon">⚙️</div>
+        <div class="card-title">Configurable workflows across organizations</div>
+        <p class="card-desc">New orgs onboarded through configuration instead of custom engineering work.</p>
+      </div>
+      <div class="card reveal reveal-d1">
+        <div class="card-icon">⏱️</div>
+        <div class="card-title">Reduced manual configuration effort</div>
+        <p class="card-desc">Presets and sensible defaults cut repetitive setup for admins and teams.</p>
+      </div>
+      <div class="card reveal reveal-d2">
+        <div class="card-icon">🔀</div>
+        <div class="card-title">Simplified complex approval processes</div>
+        <p class="card-desc">A single system absorbed hierarchies that previously lived in code and spreadsheets.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-icon">👥</div>
+        <div class="card-title">Improved engineering collaboration</div>
+        <p class="card-desc">Shared patterns and clear rationale reduced back-and-forth during build.</p>
+      </div>
+      <div class="card reveal reveal-d1">
+        <div class="card-icon">🧩</div>
+        <div class="card-title">Created reusable interaction patterns</div>
+        <p class="card-desc">Forms, validation, and status patterns became building blocks for future features.</p>
+      </div>
+      <div class="card reveal reveal-d2">
+        <div class="card-icon">📈</div>
+        <div class="card-title">Supported future scalability</div>
+        <p class="card-desc">The platform could grow to new therapies and org types without redesign.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     REFLECTION
+══════════════════════════════════════ -->
+<section id="reflection">
+  <div class="container" style="position:relative;">
+    <div class="ghost-index">09</div>
+    <div class="section-intro reveal">
+      <span class="eyebrow">Reflection</span>
+      <h2 class="section-heading" style="margin-top:1rem;">What I'd <span style="color:var(--accent);">improve</span> today.</h2>
+    </div>
+    <div class="card-grid card-grid-3">
+      <div class="card reveal">
+        <div class="card-num">01</div>
+        <div class="card-title">Approval flow simulation</div>
+        <p class="card-desc">A sandbox to dry-run a configured approval chain against sample orders before going live.</p>
+      </div>
+      <div class="card reveal reveal-d1">
+        <div class="card-num">02</div>
+        <div class="card-title">Analytics dashboards</div>
+        <p class="card-desc">Visibility into where orders stall so teams could improve their own configurations.</p>
+      </div>
+      <div class="card reveal reveal-d2">
+        <div class="card-num">03</div>
+        <div class="card-title">AI-assisted configuration</div>
+        <p class="card-desc">Suggesting approval groups and validation rules from an org's historical patterns.</p>
+      </div>
+      <div class="card reveal">
+        <div class="card-num">04</div>
+        <div class="card-title">Predictive validation</div>
+        <p class="card-desc">Catching likely-wrong data before submission, not just structurally-invalid data.</p>
+      </div>
+      <div class="card reveal reveal-d1">
+        <div class="card-num">05</div>
+        <div class="card-title">Design debt</div>
+        <p class="card-desc">A few early patterns hardened faster than they should have — I'd invest in the token layer sooner.</p>
+      </div>
+      <div class="card reveal reveal-d2">
+        <div class="card-num">06</div>
+        <div class="card-title">Lessons learned</div>
+        <p class="card-desc">In enterprise, the interface is the easy part. The real design work is in the model beneath it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     FOOTER / CONTACT
+══════════════════════════════════════ -->
+<footer id="contact">
+  <div class="footer-orb"></div>
+  <div class="container" style="position:relative;z-index:2;">
+    <h2 class="footer-quote reveal">Design is about reducing complexity, not adding features.</h2>
+    <p class="footer-sub reveal">
+      Solving enterprise problems taught me that the most valuable design isn't the most visible.
+      It's the structure underneath — the model, the constraints, the guardrails — that lets a
+      complex product feel simple. That's the kind of work I want to keep doing.
+    </p>
+    <div class="footer-cta reveal">
+      <a href="mailto:anieansh13@gmail.com" class="btn-primary">
+        ✉ anieansh13@gmail.com
+        <span class="arrow-chip">↗</span>
+      </a>
+      <a href="https://www.linkedin.com/in/ansh-pahwa-a0a90613b/" target="_blank" rel="noopener noreferrer" class="btn-ghost">
+        in LinkedIn
+      </a>
+    </div>
+    <div class="footer-bar reveal">
+      <span class="footer-copy">© 2026 Ansh Pahwa · Senior Product Designer</span>
+      <button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top ↑</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ── Scroll progress bar ──
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrolled = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+    progressBar.style.width = (scrolled * 100) + '%';
+  }, { passive: true });
+
+  // ── Reveal on scroll ──
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => observer.observe(el));
+
+  // ── Accordion ──
+  function toggleAccordion(btn) {
+    const item = btn.closest('.accordion-item');
+    const body = item.querySelector('.accordion-body');
+    const isOpen = item.classList.contains('open');
+    // close all siblings
+    btn.closest('.accordion').querySelectorAll('.accordion-item').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.accordion-body').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+
+  // Fix: reset max-height on resize
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.accordion-item.open .accordion-body').forEach(b => {
+      b.style.maxHeight = b.scrollHeight + 'px';
+    });
+  });
+
+  // ── Fix deep dive section inline style (remove accidental CSS) ──
+  const badText = document.querySelector('#solutions .container');
+  if (badText) {
+    badText.querySelectorAll('*').forEach(el => {
+      if (el.childNodes.length === 1 && el.childNodes[0].nodeType === 3 &&
+          el.childNodes[0].textContent.trim().startsWith('@media')) {
+        el.remove();
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
